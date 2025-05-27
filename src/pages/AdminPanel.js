@@ -116,10 +116,38 @@ function AdminPanel() {
 
           <div className="section">
             <h4>Deduct for Items</h4>
-            <button onClick={() => deductFromWallet("tea", 10)}>☕ Tea ₹10</button>
-            <button onClick={() => deductFromWallet("water", 10)}>💧 Water ₹10</button>
-            <button onClick={() => deductFromWallet("coffee", 15)}>🥤 Coffee ₹15</button>
+
+            <div>
+              <label>
+                Tea Quantity:
+                <input type="number" min="1" value={teaCount} onChange={(e) => setTeaCount(Number(e.target.value))} />
+              </label>
+              <button onClick={() => deductFromWallet("tea", 10 * teaCount)}>
+                ☕ Tea @ ₹10 x {teaCount} = ₹{10 * teaCount}
+              </button>
+            </div>
+
+            <div>
+              <label>
+                Water Quantity:
+                <input type="number" min="1" value={waterCount} onChange={(e) => setWaterCount(Number(e.target.value))} />
+              </label>
+              <button onClick={() => deductFromWallet("water", 10 * waterCount)}>
+                💧 Water @ ₹10 x {waterCount} = ₹{10 * waterCount}
+              </button>
+            </div>
+
+            <div>
+              <label>
+                Coffee Quantity:
+                <input type="number" min="1" value={coffeeCount} onChange={(e) => setCoffeeCount(Number(e.target.value))} />
+              </label>
+              <button onClick={() => deductFromWallet("coffee", 15 * coffeeCount)}>
+                🥤 Coffee @ ₹15 x {coffeeCount} = ₹{15 * coffeeCount}
+              </button>
+            </div>
           </div>
+
 
           <div className="section">
             <h4>Transaction History</h4>
