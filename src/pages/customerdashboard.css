@@ -1,0 +1,76 @@
+.dashboard {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px 30px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.dashboard h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.dashboard h3 {
+  font-size: 1.4rem;
+  margin-bottom: 30px;
+  color: #27ae60;
+}
+
+.dashboard h4 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #27ae60;
+  padding-bottom: 5px;
+  color: #34495e;
+}
+
+.dashboard ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.dashboard ul li {
+  background-color: #fff;
+  margin-bottom: 12px;
+  padding: 12px 15px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  font-size: 1rem;
+  color: #555;
+  transition: background-color 0.2s ease;
+  cursor: default;
+}
+
+.dashboard ul li:hover {
+  background-color: #eafaf1;
+}
+
+.dashboard p {
+  font-style: italic;
+  color: #888;
+  font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+  .dashboard {
+    margin: 20px 15px;
+    padding: 15px 20px;
+  }
+
+  .dashboard h2 {
+    font-size: 1.4rem;
+  }
+
+  .dashboard h3 {
+    font-size: 1.2rem;
+  }
+
+  .dashboard h4 {
+    font-size: 1rem;
+  }
+}

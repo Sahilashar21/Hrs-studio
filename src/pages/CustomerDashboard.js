@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { auth, db } from "../firebase/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, query, where, onSnapshot, getDocs } from "firebase/firestore";
+import "./customerdashboard.css";
 
 const CustomerDashboard = () => {
   const [user, setUser] = useState(null);
@@ -52,7 +53,7 @@ const CustomerDashboard = () => {
   if (loading) return <div>Loading your dashboard...</div>;
 
   return (
-    <div style={{ padding: "30px" }}>
+    <div style={{ padding: "30px" }} className="dashboard">
       <h2>🎤 Welcome, {user?.displayName || user?.email}</h2>
       <h3>💰 Wallet Balance: ₹{walletBalance}</h3>
 
