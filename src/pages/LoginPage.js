@@ -2,6 +2,8 @@
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import './LoginPage.css';
+
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -24,11 +26,12 @@ function LoginPage() {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "100px" }}>
-      <h2>Welcome to HRS Karaoke Wallet</h2>
-      <button onClick={loginWithGoogle}>Login with Google</button>
-    </div>
-  );
+  <div className="login-container">
+    <h2>Welcome to HRS Karaoke Wallet</h2>
+    <button className="login-btn" onClick={loginWithGoogle}>Login with Google</button>
+  </div>
+);
+
 }
 
 export default LoginPage;
