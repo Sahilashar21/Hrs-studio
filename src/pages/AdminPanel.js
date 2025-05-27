@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { db } from "../firebase/firebaseConfig";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
-import "./styles.css"; // Import the CSS
+import "./styles.css";
 
 function AdminPanel() {
   const [email, setEmail] = useState("");
   const [userData, setUserData] = useState(null);
   const [rechargeAmount, setRechargeAmount] = useState("");
   const [songCount, setSongCount] = useState(1);
+  const [teaQty, setTeaQty] = useState(1);
+  const [waterQty, setWaterQty] = useState(1);
+  const [coffeeQty, setCoffeeQty] = useState(1);
   const [loading, setLoading] = useState(false);
 
   const fetchUser = async () => {
@@ -106,10 +109,10 @@ function AdminPanel() {
                 onChange={(e) => setSongCount(Number(e.target.value))}
               />
             </label>
-            <button onClick={() => deductFromWallet("song", 25 * songCount)}>
+            <button onClick={() => deductFromWallet("song ₹25", 25 * songCount)}>
               🎵 Song @ ₹25 x {songCount} = ₹{25 * songCount}
             </button>
-            <button onClick={() => deductFromWallet("song", 30 * songCount)}>
+            <button onClick={() => deductFromWallet("song ₹30", 30 * songCount)}>
               🎵 Song @ ₹30 x {songCount} = ₹{30 * songCount}
             </button>
           </div>
@@ -119,35 +122,49 @@ function AdminPanel() {
 
             <div>
               <label>
-                Tea Quantity:
-                <input type="number" min="1" value={teaCount} onChange={(e) => setTeaCount(Number(e.target.value))} />
+                Tea Qty:
+                <input
+                  type="number"
+                  min="1"
+                  value={teaQty}
+                  onChange={(e) => setTeaQty(Number(e.target.value))}
+                />
               </label>
-              <button onClick={() => deductFromWallet("tea", 10 * teaCount)}>
-                ☕ Tea @ ₹10 x {teaCount} = ₹{10 * teaCount}
+              <button onClick={() => deductFromWallet("tea", 10 * teaQty)}>
+                ☕ Tea x {teaQty} = ₹{10 * teaQty}
               </button>
             </div>
 
             <div>
               <label>
-                Water Quantity:
-                <input type="number" min="1" value={waterCount} onChange={(e) => setWaterCount(Number(e.target.value))} />
+                Water Qty:
+                <input
+                  type="number"
+                  min="1"
+                  value={waterQty}
+                  onChange={(e) => setWaterQty(Number(e.target.value))}
+                />
               </label>
-              <button onClick={() => deductFromWallet("water", 10 * waterCount)}>
-                💧 Water @ ₹10 x {waterCount} = ₹{10 * waterCount}
+              <button onClick={() => deductFromWallet("water", 10 * waterQty)}>
+                💧 Water x {waterQty} = ₹{10 * waterQty}
               </button>
             </div>
 
             <div>
               <label>
-                Coffee Quantity:
-                <input type="number" min="1" value={coffeeCount} onChange={(e) => setCoffeeCount(Number(e.target.value))} />
+                Coffee Qty:
+                <input
+                  type="number"
+                  min="1"
+                  value={coffeeQty}
+                  onChange={(e) => setCoffeeQty(Number(e.target.value))}
+                />
               </label>
-              <button onClick={() => deductFromWallet("coffee", 15 * coffeeCount)}>
-                🥤 Coffee @ ₹15 x {coffeeCount} = ₹{15 * coffeeCount}
+              <button onClick={() => deductFromWallet("coffee", 15 * coffeeQty)}>
+                🥤 Coffee x {coffeeQty} = ₹{15 * coffeeQty}
               </button>
             </div>
           </div>
-
 
           <div className="section">
             <h4>Transaction History</h4>
