@@ -3,7 +3,19 @@ import { db } from "../firebase/firebaseConfig";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import "./styles.css";
 
+const allowedAdmins = [
+  "hetuashar@gmail.com",
+  "sahilashar21@gmail.com",
+  "asharhiten@gmail.com",
+];
+
+const ADMIN_PASSWORD = "04232129";
+
 function AdminPanel() {
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [authenticated, setAuthenticated] = useState(false);
+
   const [email, setEmail] = useState("");
   const [userData, setUserData] = useState(null);
   const [rechargeAmount, setRechargeAmount] = useState("");
@@ -12,6 +24,14 @@ function AdminPanel() {
   const [waterQty, setWaterQty] = useState(1);
   const [coffeeQty, setCoffeeQty] = useState(1);
   const [loading, setLoading] = useState(false);
+
+  const authenticateAdmin = () => {
+    if (allowedAdmins.includes(adminEmail) && adminPassword === ADMIN_PASSWORD) {
+      setAuthenticated(true);
+    } else {
+      alert("Access Denied: Invalid email or password.");
+    }
+  };
 
   const fetchUser = async () => {
     setLoading(true);
@@ -70,6 +90,26 @@ function AdminPanel() {
     fetchUser();
   };
 
+  if (!authenticated) {
+    return (
+      <div className="admin-panel">
+        <h2>Admin Access Required</h2>
+        <input
+          placeholder="Enter admin email"
+          value={adminEmail}
+          onChange={(e) => setAdminEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Enter password"
+          value={adminPassword}
+          onChange={(e) => setAdminPassword(e.target.value)}
+        />
+        <button onClick={authenticateAdmin}>Login as Admin</button>
+      </div>
+    );
+  }
+
   return (
     <div className="admin-panel">
       <h2>Admin Panel – HRS Studio</h2>
@@ -109,17 +149,16 @@ function AdminPanel() {
                 onChange={(e) => setSongCount(Number(e.target.value))}
               />
             </label>
-            <button onClick={() => deductFromWallet("song ₹25", 25 * songCount)}>
+            <button onClick={() => deductFromWallet("song", 25 * songCount)}>
               🎵 Song @ ₹25 x {songCount} = ₹{25 * songCount}
             </button>
-            <button onClick={() => deductFromWallet("song ₹30", 30 * songCount)}>
+            <button onClick={() => deductFromWallet("song", 30 * songCount)}>
               🎵 Song @ ₹30 x {songCount} = ₹{30 * songCount}
             </button>
           </div>
 
           <div className="section">
             <h4>Deduct for Items</h4>
-
             <div>
               <label>
                 Tea Qty:
@@ -172,7 +211,8 @@ function AdminPanel() {
               <ul>
                 {userData.transactionHistory.map((tx, index) => (
                   <li key={index}>
-                    {new Date(tx.date).toLocaleString()} — <strong>{tx.type}</strong> (₹{tx.amount})
+                    {new Date(tx.date).toLocaleString()} —{" "}
+                    <strong>{tx.type}</strong> (₹{tx.amount})
                   </li>
                 ))}
               </ul>
