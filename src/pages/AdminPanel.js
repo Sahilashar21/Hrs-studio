@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { db } from "../firebase/firebaseConfig";
-import { doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  arrayUnion,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 import "./styles.css";
 
 const allowedAdmins = [
@@ -24,6 +32,12 @@ function AdminPanel() {
   const [waterQty, setWaterQty] = useState(1);
   const [coffeeQty, setCoffeeQty] = useState(1);
   const [loading, setLoading] = useState(false);
+
+  const [isEditingBalance, setIsEditingBalance] = useState(false);
+  const [editedBalance, setEditedBalance] = useState(0);
+
+  const [allUsers, setAllUsers] = useState([]);
+  const [showAllUsers, setShowAllUsers] = useState(false);
 
   const authenticateAdmin = () => {
     if (allowedAdmins.includes(adminEmail) && adminPassword === ADMIN_PASSWORD) {
@@ -90,6 +104,62 @@ function AdminPanel() {
     fetchUser();
   };
 
+  const updateTransaction = async (index, updatedTx) => {
+    const newList = [...userData.transactionHistory];
+    newList[index] = updatedTx;
+
+    const userRef = doc(db, "users", email);
+    await updateDoc(userRef, {
+      transactionHistory: newList,
+    });
+
+    fetchUser();
+  };
+
+  const deleteTransaction = async (index) => {
+    const newList = [...userData.transactionHistory];
+    newList.splice(index, 1);
+
+    const userRef = doc(db, "users", email);
+    await updateDoc(userRef, {
+      transactionHistory: newList,
+    });
+
+    fetchUser();
+  };
+
+  const updateRecharge = async (index, updatedRc) => {
+    const newList = [...userData.rechargeHistory];
+    newList[index] = updatedRc;
+
+    const userRef = doc(db, "users", email);
+    await updateDoc(userRef, {
+      rechargeHistory: newList,
+    });
+
+    fetchUser();
+  };
+
+  const deleteRecharge = async (index) => {
+    const newList = [...userData.rechargeHistory];
+    newList.splice(index, 1);
+
+    const userRef = doc(db, "users", email);
+    await updateDoc(userRef, {
+      rechargeHistory: newList,
+    });
+
+    fetchUser();
+  };
+
+  const fetchAllUsers = async () => {
+    const usersCol = collection(db, "users");
+    const userSnapshot = await getDocs(usersCol);
+    const usersList = userSnapshot.docs.map((doc) => doc.data());
+    setAllUsers(usersList);
+    setShowAllUsers(true);
+  };
+
   if (!authenticated) {
     return (
       <div className="admin-panel">
@@ -120,12 +190,62 @@ function AdminPanel() {
         onChange={(e) => setEmail(e.target.value)}
       />
       <button onClick={fetchUser}>Load User</button>
+      <button onClick={fetchAllUsers}>📋 View All Users</button>
 
       {loading && <p>Loading user data...</p>}
 
-      {userData && (
+      {showAllUsers && (
+        <div className="section">
+          <h3>All Users</h3>
+          <ul>
+            {allUsers.map((user, idx) => (
+              <li key={idx}>
+                <strong>{user.email}</strong> — ₹{user.balance}
+              </li>
+            ))}
+          </ul>
+          <button onClick={() => setShowAllUsers(false)}>🔙 Hide All Users</button>
+        </div>
+      )}
+
+      {userData && !showAllUsers && (
         <>
-          <h3>Balance: ₹{userData.balance}</h3>
+          <h3>
+            Balance: ₹
+            {isEditingBalance ? (
+              <>
+                <input
+                  type="number"
+                  value={editedBalance}
+                  onChange={(e) => setEditedBalance(Number(e.target.value))}
+                />
+                <button
+                  onClick={async () => {
+                    const userRef = doc(db, "users", email);
+                    await updateDoc(userRef, { balance: editedBalance });
+                    setIsEditingBalance(false);
+                    fetchUser();
+                  }}
+                >
+                  ✅ Save
+                </button>
+                <button onClick={() => setIsEditingBalance(false)}>❌ Cancel</button>
+              </>
+            ) : (
+              <>
+                {userData.balance}
+                <button
+                  style={{ marginLeft: "10px" }}
+                  onClick={() => {
+                    setEditedBalance(userData.balance);
+                    setIsEditingBalance(true);
+                  }}
+                >
+                  ✏️ Edit Balance
+                </button>
+              </>
+            )}
+          </h3>
 
           <div className="section">
             <h4>Recharge Wallet</h4>
@@ -159,50 +279,25 @@ function AdminPanel() {
 
           <div className="section">
             <h4>Deduct for Items</h4>
-            <div>
-              <label>
-                Tea Qty:
-                <input
-                  type="number"
-                  min="1"
-                  value={teaQty}
-                  onChange={(e) => setTeaQty(Number(e.target.value))}
-                />
-              </label>
-              <button onClick={() => deductFromWallet("tea", 10 * teaQty)}>
-                ☕ Tea x {teaQty} = ₹{10 * teaQty}
-              </button>
-            </div>
-
-            <div>
-              <label>
-                Water Qty:
-                <input
-                  type="number"
-                  min="1"
-                  value={waterQty}
-                  onChange={(e) => setWaterQty(Number(e.target.value))}
-                />
-              </label>
-              <button onClick={() => deductFromWallet("water", 10 * waterQty)}>
-                💧 Water x {waterQty} = ₹{10 * waterQty}
-              </button>
-            </div>
-
-            <div>
-              <label>
-                Coffee Qty:
-                <input
-                  type="number"
-                  min="1"
-                  value={coffeeQty}
-                  onChange={(e) => setCoffeeQty(Number(e.target.value))}
-                />
-              </label>
-              <button onClick={() => deductFromWallet("coffee", 15 * coffeeQty)}>
-                🥤 Coffee x {coffeeQty} = ₹{15 * coffeeQty}
-              </button>
-            </div>
+            {[{ label: "Tea", qty: teaQty, setQty: setTeaQty, price: 10 },
+              { label: "Water", qty: waterQty, setQty: setWaterQty, price: 10 },
+              { label: "Coffee", qty: coffeeQty, setQty: setCoffeeQty, price: 15 }
+            ].map((item) => (
+              <div key={item.label}>
+                <label>
+                  {item.label} Qty:
+                  <input
+                    type="number"
+                    min="1"
+                    value={item.qty}
+                    onChange={(e) => item.setQty(Number(e.target.value))}
+                  />
+                </label>
+                <button onClick={() => deductFromWallet(item.label.toLowerCase(), item.price * item.qty)}>
+                  {item.label} x {item.qty} = ₹{item.price * item.qty}
+                </button>
+              </div>
+            ))}
           </div>
 
           <div className="section">
@@ -211,8 +306,21 @@ function AdminPanel() {
               <ul>
                 {userData.transactionHistory.map((tx, index) => (
                   <li key={index}>
-                    {new Date(tx.date).toLocaleString()} —{" "}
-                    <strong>{tx.type}</strong> (₹{tx.amount})
+                    {new Date(tx.date).toLocaleString()} — <strong>{tx.type}</strong> (₹{tx.amount})
+                    <button
+                      onClick={() => {
+                        const newAmount = prompt("Edit amount", tx.amount);
+                        if (newAmount !== null) {
+                          updateTransaction(index, {
+                            ...tx,
+                            amount: Number(newAmount),
+                          });
+                        }
+                      }}
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button onClick={() => deleteTransaction(index)}>🗑️ Delete</button>
                   </li>
                 ))}
               </ul>
@@ -228,6 +336,22 @@ function AdminPanel() {
                 {userData.rechargeHistory.map((rc, index) => (
                   <li key={index}>
                     {new Date(rc.date).toLocaleString()} — ₹{rc.amount} + Bonus ₹{rc.bonus}
+                    <button
+                      onClick={() => {
+                        const newAmount = prompt("Edit amount", rc.amount);
+                        if (newAmount !== null) {
+                          const newBonus = Math.floor(Number(newAmount) * 0.10);
+                          updateRecharge(index, {
+                            ...rc,
+                            amount: Number(newAmount),
+                            bonus: newBonus,
+                          });
+                        }
+                      }}
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button onClick={() => deleteRecharge(index)}>🗑️ Delete</button>
                   </li>
                 ))}
               </ul>

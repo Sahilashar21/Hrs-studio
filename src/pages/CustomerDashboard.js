@@ -99,7 +99,9 @@ return (
     <div className="contact-info">
       <h4>📞 Contact Us</h4>
       <p>📍 HRS Studio, Shop no 9, Harsiddhi APT, Gokul Aangan Vasai west </p>
-      <p>📞 +91 9321066921</p>
+      <p>📞 +91 9321066921/22</p>
+      <p>⏱️ Monday to Saturday: 5:30 PM to 10 PM</p>
+      <p>⏱️ Sunday: 10:30 AM to 1:30 PM & 5:30 PM to 10 PM</p>
     </div>
   </div>
 );

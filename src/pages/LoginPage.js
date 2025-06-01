@@ -4,7 +4,6 @@ import { auth } from "../firebase/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import './LoginPage.css';
 
-
 function LoginPage() {
   const navigate = useNavigate();
 
@@ -18,20 +17,24 @@ function LoginPage() {
       if (user.email === "asharhiten@gmail.com") {
         navigate("/admin");
       } else {
-        navigate("/dashboard"); // or wherever your user panel is
+        navigate("/dashboard");
       }
     } catch (error) {
       console.error("Login failed", error);
     }
   };
 
-  return (
-  <div className="login-container">
-    <h2>Welcome to HRS Karaoke Wallet</h2>
-    <button className="login-btn" onClick={loginWithGoogle}>Login with Google</button>
-  </div>
-);
+  const openReviewLink = () => {
+    window.open("https://g.co/kgs/Co7pMp7", "_blank");
+  };
 
+  return (
+    <div className="login-container">
+      <h2>Welcome to HRS Studio Wallet</h2>
+      <button className="login-btn" onClick={loginWithGoogle}>Login with Google</button>
+      <button className="review-btn" onClick={openReviewLink}>Leave a Google Review</button>
+    </div>
+  );
 }
 
 export default LoginPage;
