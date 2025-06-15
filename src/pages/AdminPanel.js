@@ -187,7 +187,7 @@ function AdminPanel() {
       <input
         placeholder="Enter customer email"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={(e) => setEmail(e.target.value.toLowerCase().trim())}
       />
       <button onClick={fetchUser}>Load User</button>
       <button onClick={fetchAllUsers}>📋 View All Users</button>
