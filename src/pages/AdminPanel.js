@@ -197,13 +197,13 @@ function AdminPanel() {
       {showAllUsers && (
         <div className="section">
           <h3>All Users</h3>
-          <ul>
+          <ol>
             {allUsers.map((user, idx) => (
               <li key={idx}>
                 <strong>{user.email}</strong> — ₹{user.balance}
               </li>
             ))}
-          </ul>
+          </ol>
           <button onClick={() => setShowAllUsers(false)}>🔙 Hide All Users</button>
         </div>
       )}
